@@ -1,5 +1,8 @@
 # Changelog
 
+[1.1.0] - 2025-09-10
+- Rewrote CRUD operations for scene types.
+
 [1.0.2] - 2025-09-09
 - Fixed bug where types.json was not being created.
 
