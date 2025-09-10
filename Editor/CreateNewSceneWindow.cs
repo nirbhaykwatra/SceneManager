@@ -118,10 +118,6 @@ namespace SceneManager
             
             SceneTypes.Add(NewSceneType);
             string json = JsonConvert.SerializeObject(SceneTypes);
-            foreach (string sceneTypeString in SceneTypes)
-            {
-                Debug.Log($"SceneTypes: {sceneTypeString}");
-            }
             if (File.Exists("Assets/Editor/types.json"))
             {
                 File.Delete("Assets/Editor/types.json");
@@ -151,10 +147,6 @@ namespace SceneManager
             }
             
             SceneTypes.Remove(SelectSceneType);
-            foreach (string sceneTypeString in SceneTypes)
-            {
-                Debug.Log($"SceneTypes: {sceneTypeString}");
-            }
             string json = JsonConvert.SerializeObject(SceneTypes);
             if (File.Exists("Assets/Editor/types.json"))
             {
