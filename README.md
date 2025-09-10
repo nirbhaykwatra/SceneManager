@@ -5,9 +5,9 @@
 A convenient tool for managing scene assets in a Unity project.
 
 ### System Requirements
-Unity 6000.0+. Will likely work on earlier versions but this is the version I tested with.
+    Unity 6000.0+. Will likely work on earlier versions but this is the version I tested with.
 
-Requires Odin Inspector (UI Toolkit version coming in the future).
+    Requires Odin Inspector (UI Toolkit version coming in the future).
 
 ### Installation
 Use the Package Manager and use Add package from git URL, using the following: 
