@@ -248,7 +248,6 @@ namespace SceneManager
             foreach (string type in types)
             {
                 SceneTypes.Add(type);
-                Debug.Log($"Added {type} to SceneTypes list.");
             }
         }
         
@@ -261,14 +260,12 @@ namespace SceneManager
                 File.Delete(sceneTypesPath + ".meta");
             }
             File.WriteAllText(sceneTypesPath, json);
-            Debug.Log("SceneTypes list exported to types.json.");
         }
         
         public void DeleteSceneType(string type)
         {
             if (!SceneTypes.Contains(type)) return;
             SceneTypes.Remove(type);
-            Debug.Log($"Removed {type} from SceneTypes list.");
             ExportSceneTypes();
         }
         
@@ -276,7 +273,6 @@ namespace SceneManager
         {
             if (SceneTypes.Contains(type)) return;
             SceneTypes.Add(type);
-            Debug.Log($"Added {type} to SceneTypes list.");
             ExportSceneTypes();
         }
 
