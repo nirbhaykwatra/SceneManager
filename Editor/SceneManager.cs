@@ -26,14 +26,9 @@ namespace SceneManager
         {
             // Clean unused scene metadata
             sceneUtilities.CleanSceneMetadata();
-
-            // Import scene types from types.json
             
             // Check if scene types json exists. If not, create it.
-            if (!File.Exists("Assets/Editor/types.json"))
-            {
-                File.WriteAllText("Assets/Editor/types.json", "[\"Level\"]");
-            }
+            sceneUtilities.CreateSceneTypesMetadataIfNotExists();
         }
         
         // Method to open the Scene Manager window. Adds Scene Manager to the File menu.
@@ -44,6 +39,14 @@ namespace SceneManager
         {
             base.OnEnable();
             titleContent = new GUIContent("Scene Manager");
+            AssetDatabase.Refresh();
+            SceneAssetDisplay.OnSceneAssetChanged += ForceMenuTreeRebuild;
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            SceneAssetDisplay.OnSceneAssetChanged -= ForceMenuTreeRebuild;
         }
 
         protected override void OnImGUI()
@@ -61,6 +64,7 @@ namespace SceneManager
             if (GUI.Button(btnRect1,"Clean Project Metadata", style))
             {
                 sceneUtilities.CleanSceneMetadata();
+                sceneUtilities.ImportSceneTypes();
                 ForceMenuTreeRebuild();
             }
             

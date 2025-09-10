@@ -18,28 +18,12 @@ namespace SceneManager
         public CreateNewSceneWindow()
         {
             // Import scene types from types.json
-            
-            // Check if scene types json exists. If not, create it.
-            if (!File.Exists("Assets/Editor/types.json"))
-            {
-                File.WriteAllText("Assets/Editor/types.json", "[\"Level\"]");
-            }
-            
-            // Parse types.json into a list of scene types, formatted as strings.
-            string json = File.ReadAllText("Assets/Editor/types.json");
-            if (json == "") json = "[\"Level\"]";
-            string[] types = JsonConvert.DeserializeObject<string[]>(json);
-            
-            // Load each scene type into memory using the SceneTypes list.
-            foreach (string type in types)
-            {
-                SceneTypes.Add(type);
-            }
+            sceneUtilities.ImportSceneTypes();
             
             // Set the sceneType field of the window to the first item in the SceneTypes list.
             // If sceneType is null, the ValueDropdown in the window will be blank by default.
-            sceneType = SceneTypes[0];
-            SelectSceneType = SceneTypes[0];
+            sceneType = sceneUtilities.GetSceneTypeByIndex(0);
+            SelectSceneType = sceneUtilities.GetSceneTypeByIndex(0);
         }
         
         // Method to open the Create New Scene window. Adds Create New Scene window to the File menu.
@@ -49,7 +33,7 @@ namespace SceneManager
         // Create a SceneUtilities object to access scene helper methods.
         private readonly SceneUtilities sceneUtilities = new SceneUtilities();
         
-        private static List<string> SceneTypes = new List<string>();
+        private List<string> sceneTypes = SceneUtilities.SceneTypesList;
         
         [ShowInInspector]
         private string sceneName;
@@ -68,7 +52,7 @@ namespace SceneManager
         [ShowInInspector]
         private SceneTemplateAsset sceneTemplate;
         
-        [ValueDropdown("SceneTypes")]
+        [ValueDropdown("sceneTypes")]
         [ShowInInspector]
         private string sceneType;
         
@@ -110,25 +94,20 @@ namespace SceneManager
                 return;
             }
 
-            if (SceneTypes.Contains(NewSceneType))
+            if (sceneUtilities.DoesSceneTypeExist(NewSceneType))
             {
                 EditorUtility.DisplayDialog("Error", "Scene type already exists", "OK");
                 return;
             }
             
-            SceneTypes.Add(NewSceneType);
-            string json = JsonConvert.SerializeObject(SceneTypes);
-            if (File.Exists("Assets/Editor/types.json"))
-            {
-                File.Delete("Assets/Editor/types.json");
-            }
-            File.WriteAllText("Assets/Editor/types.json", json);
+            sceneUtilities.AddSceneType(NewSceneType);
+            sceneUtilities.ImportSceneTypes();
             NewSceneType = "";
-            GetWindow(typeof(CreateNewSceneWindow));
+            Repaint();
         }
         
         [PropertyOrder(1001)]
-        [ValueDropdown("SceneTypes")]
+        [ValueDropdown("sceneTypes")]
         [ShowInInspector]
         [InlineButton("RemoveSceneType", "Remove Scene Type")]
         private string SelectSceneType;
@@ -140,21 +119,16 @@ namespace SceneManager
                 return;
             }
 
-            if (!SceneTypes.Contains(SelectSceneType))
+            if (!sceneUtilities.DoesSceneTypeExist(SelectSceneType))
             {
                 EditorUtility.DisplayDialog("Error", "Scene type does not exist", "OK");
                 return;
             }
             
-            SceneTypes.Remove(SelectSceneType);
-            string json = JsonConvert.SerializeObject(SceneTypes);
-            if (File.Exists("Assets/Editor/types.json"))
-            {
-                File.Delete("Assets/Editor/types.json");
-            }
-            File.WriteAllText("Assets/Editor/types.json", json);
-            SelectSceneType = SceneTypes[0];
-            GetWindow(typeof(CreateNewSceneWindow));
+            sceneUtilities.DeleteSceneType(SelectSceneType);
+            sceneUtilities.ImportSceneTypes();
+            SelectSceneType = sceneUtilities.GetSceneTypeByIndex(0);
+            Repaint();
         }
     }
 }

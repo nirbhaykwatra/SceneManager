@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using Newtonsoft.Json;
 using System.IO;
@@ -25,6 +26,10 @@ namespace SceneManager
     /// </summary>
     public class SceneUtilities
     {
+        private static readonly List<string> SceneTypes = new List<string>();
+
+        public static List<string> SceneTypesList => SceneTypes;
+
         /// <summary>
         /// Creates a metadata .json file for the given scene.
         /// </summary>
@@ -86,6 +91,53 @@ namespace SceneManager
             AssetDatabase.Refresh();
         }
         
+        public void CreateSceneTypesMetadataIfNotExists()
+        {
+            // Set path to types.json.
+            string metadataPath = $"Assets/Editor/types.json";
+            
+            // Check if the scene's metadata file exists. If it does, return.
+            bool fileExists = File.Exists(metadataPath);
+            bool fileHasValidJSON = true;
+
+            if (!fileExists)
+            {
+                // If the file does not exist, create it.
+                using (StreamWriter sw = File.CreateText(metadataPath))
+                {
+                    sw.WriteLine("");
+                    sw.Close();
+                }
+            }
+
+            try
+            {
+                // Attempt to deserialize JSON file.
+                string json = File.ReadAllText(metadataPath);
+                // If file is empty, it does not have valid JSON
+                if (json == "") fileHasValidJSON = false; 
+                JsonConvert.DeserializeObject(json);
+            }
+            catch (JsonReaderException exception)
+            {
+                // If JSON file cannot be parsed, set fileHasValidJSON to false.
+                fileHasValidJSON = false;
+            }
+            
+            // If the JSON file exists and is valid, do nothing.
+            if (fileExists && fileHasValidJSON)
+            {
+                return;
+            }
+            
+            // If either the file does not exist or does not contain valid JSON, create a new metadata file with default
+            // data.
+            string[] metadata = {"Level"};
+            
+            // Serialize the default metadata object into a metadata .json file.
+            File.WriteAllText(metadataPath, JsonConvert.SerializeObject(metadata));
+        }
+        
         /// <summary>
         /// Create a new scene in the project using the given parameters.
         /// </summary>
@@ -101,7 +153,6 @@ namespace SceneManager
             {
                 EditorUtility.DisplayDialog("Error", "Scene already exists", "OK");
             }
-            
             
             if (useTemplate)
             {
@@ -178,6 +229,58 @@ namespace SceneManager
                     File.Delete(metadata);
                 }
             }
+        }
+
+        public void ImportSceneTypes()
+        {
+            CreateSceneTypesMetadataIfNotExists();
+            string typesText = File.ReadAllText("Assets/Editor/types.json");
+            string[] types = JsonConvert.DeserializeObject<string[]>(typesText);
+            SceneTypes.Clear();
+            foreach (string type in types)
+            {
+                SceneTypes.Add(type);
+                Debug.Log($"Added {type} to SceneTypes list.");
+            }
+        }
+        
+        public void ExportSceneTypes()
+        {
+            string json = JsonConvert.SerializeObject(SceneTypes);
+            if (File.Exists("Assets/Editor/types.json"))
+            {
+                File.Delete("Assets/Editor/types.json");
+                File.Delete("Assets/Editor/types.json.meta");
+            }
+            File.WriteAllText("Assets/Editor/types.json", json);
+            Debug.Log("SceneTypes list exported to types.json.");
+        }
+        
+        public void DeleteSceneType(string type)
+        {
+            if (!SceneTypes.Contains(type)) return;
+            SceneTypes.Remove(type);
+            Debug.Log($"Removed {type} from SceneTypes list.");
+            ExportSceneTypes();
+        }
+        
+        public void AddSceneType(string type)
+        {
+            if (SceneTypes.Contains(type)) return;
+            SceneTypes.Add(type);
+            Debug.Log($"Added {type} to SceneTypes list.");
+            ExportSceneTypes();
+        }
+
+        public string GetSceneTypeByIndex(int index)
+        {
+            if (index < 0 || index >= SceneTypes.Count) return "";
+            return SceneTypes[index];
+        }
+
+        public bool DoesSceneTypeExist(string type)
+        {
+            return SceneTypes.Contains(type);
         }
     }
 }
