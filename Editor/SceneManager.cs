@@ -26,6 +26,14 @@ namespace SceneManager
         {
             // Clean unused scene metadata
             sceneUtilities.CleanSceneMetadata();
+
+            // Import scene types from types.json
+            
+            // Check if scene types json exists. If not, create it.
+            if (!File.Exists("Assets/Editor/types.json"))
+            {
+                File.WriteAllText("Assets/Editor/types.json", "[\"Level\"]");
+            }
         }
         
         // Method to open the Scene Manager window. Adds Scene Manager to the File menu.
