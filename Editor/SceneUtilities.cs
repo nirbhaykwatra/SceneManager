@@ -29,6 +29,8 @@ namespace SceneManager
         private static readonly List<string> SceneTypes = new List<string>();
 
         public static List<string> SceneTypesList => SceneTypes;
+        
+        private string sceneTypesPath = "Assets/Editor/.scenemanager/.scenetypes.json";
 
         /// <summary>
         /// Creates a metadata .json file for the given scene.
@@ -94,7 +96,7 @@ namespace SceneManager
         public void CreateSceneTypesMetadataIfNotExists()
         {
             // Set path to types.json.
-            string metadataPath = $"Assets/Editor/types.json";
+            string metadataPath = sceneTypesPath;
             
             // Check if the scene's metadata file exists. If it does, return.
             bool fileExists = File.Exists(metadataPath);
@@ -102,6 +104,12 @@ namespace SceneManager
 
             if (!fileExists)
             {
+                // Extract the directory path from the full file path
+                string directoryPath = Path.GetDirectoryName(sceneTypesPath);
+
+                // Create all directories in the path if they don't exist
+                Directory.CreateDirectory(directoryPath);
+
                 // If the file does not exist, create it.
                 using (StreamWriter sw = File.CreateText(metadataPath))
                 {
@@ -234,7 +242,7 @@ namespace SceneManager
         public void ImportSceneTypes()
         {
             CreateSceneTypesMetadataIfNotExists();
-            string typesText = File.ReadAllText("Assets/Editor/types.json");
+            string typesText = File.ReadAllText(sceneTypesPath);
             string[] types = JsonConvert.DeserializeObject<string[]>(typesText);
             SceneTypes.Clear();
             foreach (string type in types)
@@ -247,12 +255,12 @@ namespace SceneManager
         public void ExportSceneTypes()
         {
             string json = JsonConvert.SerializeObject(SceneTypes);
-            if (File.Exists("Assets/Editor/types.json"))
+            if (File.Exists(sceneTypesPath))
             {
-                File.Delete("Assets/Editor/types.json");
-                File.Delete("Assets/Editor/types.json.meta");
+                File.Delete(sceneTypesPath);
+                File.Delete(sceneTypesPath + ".meta");
             }
-            File.WriteAllText("Assets/Editor/types.json", json);
+            File.WriteAllText(sceneTypesPath, json);
             Debug.Log("SceneTypes list exported to types.json.");
         }
         
