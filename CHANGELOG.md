@@ -1,5 +1,8 @@
 # Changelog
 
+[1.1.2] - 2025-09-10
+- Removed tutorial assets
+
 [1.1.1] - 2025-09-10
 - Rewrote CreateSceneTypesMetadataIfNotExists to remove hardcoded metadata location.
 - Changed scene types .json file location from Editor/types.json to Editor/.scenemanager/.scenetypes.json
