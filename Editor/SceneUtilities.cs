@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.IO;
 using UnityEditor.SceneManagement;
 using UnityEditor.SceneTemplate;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SceneManager

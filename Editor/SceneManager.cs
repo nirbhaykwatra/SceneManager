@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -19,6 +20,8 @@ namespace SceneManager
     {
         // Create a SceneUtilities object to access scene helper methods.
         private readonly SceneUtilities sceneUtilities = new SceneUtilities();
+        
+        private static List<string> sceneTypes = SceneUtilities.SceneTypesList;
 
         private bool showByPath = false;
 
@@ -184,6 +187,13 @@ namespace SceneManager
                 
                 // Deserialize json into a SceneMetadata object
                 SceneMetadata sceneMetadata = JsonConvert.DeserializeObject<SceneMetadata>(json);
+
+                if (!sceneTypes.Contains(sceneMetadata.type))
+                {
+                    sceneUtilities.AddSceneType(sceneMetadata.type);
+                    sceneUtilities.ImportSceneTypes();
+                    ForceMenuTreeRebuild();
+                }
                 
                 // If Show By Path is active, order scenes under their respective folders in the menu tree.
                 // If not, sort scenes by type as a default.
