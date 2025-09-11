@@ -1,5 +1,8 @@
 # Changelog
 
+[1.2.0] - 2025-09-11
+- Allow users to rename/move scene assets without losing their metadata.
+
 [1.1.2] - 2025-09-10
 - Removed tutorial assets
 
