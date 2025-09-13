@@ -23,20 +23,20 @@ namespace SceneManager
     /// <summary>
     /// A class containing helper methods for the Scene Manager package.
     /// </summary>
-    public class SceneUtilities
+    public static class SceneUtilities
     {
         private static readonly List<string> SceneTypes = new List<string>();
 
         public static List<string> SceneTypesList => SceneTypes;
         
-        private string sceneTypesPath = "Assets/Editor/.scenemanager/.scenetypes.json";
+        private static string sceneTypesPath = "Assets/Editor/.scenemanager/.scenetypes.json";
 
         /// <summary>
         /// Creates a metadata .json file for the given scene.
         /// </summary>
         /// <param name="sceneAsset">SceneAsset for which to create metadata.</param>
         /// <param name="type">The scene type.</param>
-        public void CreateSceneMetadataIfNotExists(SceneAsset sceneAsset, string type = "Level")
+        private static void CreateSceneMetadataIfNotExists(SceneAsset sceneAsset, string type = "Level")
         {
             // Get paths to the scene asset, the scene's parent directory and the scene's metadata file.
             string rawScenePath = AssetDatabase.GetAssetPath(sceneAsset);
@@ -92,7 +92,7 @@ namespace SceneManager
             AssetDatabase.Refresh();
         }
         
-        public void CreateSceneTypesMetadataIfNotExists()
+        public static void CreateSceneTypesMetadataIfNotExists()
         {
             // Set path to types.json.
             string metadataPath = sceneTypesPath;
@@ -153,7 +153,7 @@ namespace SceneManager
         /// <param name="path">The path where the scene will be created.</param>
         /// <param name="type">The scene type.</param>
         /// <param name="useTemplate">Should the scene be created using a scene template?</param>
-        public void CreateNewScene(string name, SceneTemplateAsset template, string path, string type, bool useTemplate)
+        public static void CreateNewScene(string name, SceneTemplateAsset template, string path, string type, bool useTemplate)
         {
             // Check if the scene already exists. If it does, display an error message.
             if (AssetDatabase.AssetPathExists(path + "/" + name + ".unity"))
@@ -205,7 +205,7 @@ namespace SceneManager
         /// </summary>
         /// <param name="sceneAsset">The scene whose metadata is to be retrieved.</param>
         /// <returns></returns>
-        public string GetSceneMetadata(SceneAsset sceneAsset)
+        public static string GetSceneMetadata(SceneAsset sceneAsset)
         {
             // Get paths to the scene asset, the scene's parent directory and the scene's metadata file.
             string rawScenePath = AssetDatabase.GetAssetPath(sceneAsset);
@@ -222,7 +222,7 @@ namespace SceneManager
         /// Deletes all scene metadata files which do not have a .unity file with the same name, in the same directory.
         /// This effect is project-wide.
         /// </summary>
-        public void CleanSceneMetadata()
+        public static void CleanSceneMetadata()
         {
             string[] metadataFiles = Directory.GetFiles("Assets", ".*.json", SearchOption.AllDirectories);;
             foreach (string metadata in metadataFiles)
@@ -238,7 +238,7 @@ namespace SceneManager
             }
         }
 
-        public void ImportSceneTypes()
+        public static void ImportSceneTypes()
         {
             CreateSceneTypesMetadataIfNotExists();
             string typesText = File.ReadAllText(sceneTypesPath);
@@ -250,7 +250,7 @@ namespace SceneManager
             }
         }
         
-        public void ExportSceneTypes()
+        private static void ExportSceneTypes()
         {
             string json = JsonConvert.SerializeObject(SceneTypes);
             if (File.Exists(sceneTypesPath))
@@ -261,27 +261,27 @@ namespace SceneManager
             File.WriteAllText(sceneTypesPath, json);
         }
         
-        public void DeleteSceneType(string type)
+        public static void DeleteSceneType(string type)
         {
             if (!SceneTypes.Contains(type)) return;
             SceneTypes.Remove(type);
             ExportSceneTypes();
         }
         
-        public void AddSceneType(string type)
+        public static void AddSceneType(string type)
         {
             if (SceneTypes.Contains(type)) return;
             SceneTypes.Add(type);
             ExportSceneTypes();
         }
 
-        public string GetSceneTypeByIndex(int index)
+        public static string GetSceneTypeByIndex(int index)
         {
             if (index < 0 || index >= SceneTypes.Count) return "";
             return SceneTypes[index];
         }
 
-        public bool DoesSceneTypeExist(string type)
+        public static bool DoesSceneTypeExist(string type)
         {
             return SceneTypes.Contains(type);
         }

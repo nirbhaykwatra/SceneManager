@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace SceneManager
 {
+    /// <summary>
+    /// This postprocessor is responsible for managing a scene's metadata files when the scene is moved or renamed.
+    /// </summary>
     public class SceneMetadataPostprocessor : AssetPostprocessor
     {
         static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,

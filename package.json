@@ -1,6 +1,6 @@
 {
   "name": "com.nirbhaykwatra.scenemanager",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "displayName": "Scene Manager",
   "description": "A tool for easy management of all scene assets in a project.",
   "unity": "6000.0",

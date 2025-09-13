@@ -15,24 +15,13 @@ namespace SceneManager
     /// </summary>
     public class CreateNewSceneWindow : OdinEditorWindow
     {
-        public CreateNewSceneWindow()
-        {
-            // Import scene types from types.json
-            sceneUtilities.ImportSceneTypes();
-            
-            // Set the sceneType field of the window to the first item in the SceneTypes list.
-            // If sceneType is null, the ValueDropdown in the window will be blank by default.
-            sceneType = sceneUtilities.GetSceneTypeByIndex(0);
-            SelectSceneType = sceneUtilities.GetSceneTypeByIndex(0);
-        }
         
         // Method to open the Create New Scene window. Adds Create New Scene window to the File menu.
         [MenuItem("File/Create New Scene %n", priority = 10)]
         private static void OpenEditor() => GetWindow<CreateNewSceneWindow>();
         
-        // Create a SceneUtilities object to access scene helper methods.
-        private readonly SceneUtilities sceneUtilities = new SceneUtilities();
-        
+        // I know what you're thinking. But "SceneTypesList" is a static type, why am I caching it to a variable here?
+        // Check Line 53.
         private List<string> sceneTypes = SceneUtilities.SceneTypesList;
         
         [ShowInInspector]
@@ -43,7 +32,6 @@ namespace SceneManager
         [ShowInInspector]
         private string scenePath;
         
-        
         [ShowInInspector]
         private bool UseSceneTemplate;
         
@@ -52,9 +40,34 @@ namespace SceneManager
         [ShowInInspector]
         private SceneTemplateAsset sceneTemplate;
         
+        // Odin's ValueDropdown attribute doesn't appear to support variables from static classes. Bummer.
         [ValueDropdown("sceneTypes")]
         [ShowInInspector]
         private string sceneType;
+        
+        // Fields to add or remove scene types
+        [PropertyOrder(1000)]
+        [Title("Manage Scene Types")]
+        [ShowInInspector]
+        [InlineButton("CreateNewSceneType", "Create New Scene Type")]
+        private string NewSceneType;
+        
+        [PropertyOrder(1001)]
+        [ValueDropdown("sceneTypes")]
+        [ShowInInspector]
+        [InlineButton("RemoveSceneType", "Remove Scene Type")]
+        private string SelectSceneType;
+        
+        public CreateNewSceneWindow()
+        {
+            // Import scene types from types.json
+            SceneUtilities.ImportSceneTypes();
+            
+            // Set the sceneType field of the window to the first item in the SceneTypes list.
+            // If sceneType is null, the ValueDropdown in the window will be blank by default.
+            sceneType = SceneUtilities.GetSceneTypeByIndex(0);
+            SelectSceneType = SceneUtilities.GetSceneTypeByIndex(0);
+        }
         
         [Button(ButtonSizes.Large, ButtonStyle.Box, Name = "Create Scene")]
         private void CreateNewScene()
@@ -77,15 +90,9 @@ namespace SceneManager
                 return;
             }
             
-            sceneUtilities.CreateNewScene(sceneName, sceneTemplate, scenePath, sceneType, UseSceneTemplate);
+            SceneUtilities.CreateNewScene(sceneName, sceneTemplate, scenePath, sceneType, UseSceneTemplate);
         }
         
-        // Fields to add or remove scene types
-        [PropertyOrder(1000)]
-        [Title("Manage Scene Types")]
-        [ShowInInspector]
-        [InlineButton("CreateNewSceneType", "Create New Scene Type")]
-        private string NewSceneType;
         private void CreateNewSceneType()
         {
             if (NewSceneType == "")
@@ -94,23 +101,18 @@ namespace SceneManager
                 return;
             }
 
-            if (sceneUtilities.DoesSceneTypeExist(NewSceneType))
+            if (SceneUtilities.DoesSceneTypeExist(NewSceneType))
             {
                 EditorUtility.DisplayDialog("Error", "Scene type already exists", "OK");
                 return;
             }
             
-            sceneUtilities.AddSceneType(NewSceneType);
-            sceneUtilities.ImportSceneTypes();
+            SceneUtilities.AddSceneType(NewSceneType);
+            SceneUtilities.ImportSceneTypes();
             NewSceneType = "";
             Repaint();
         }
         
-        [PropertyOrder(1001)]
-        [ValueDropdown("sceneTypes")]
-        [ShowInInspector]
-        [InlineButton("RemoveSceneType", "Remove Scene Type")]
-        private string SelectSceneType;
         private void RemoveSceneType()
         {
             if (SelectSceneType == null)
@@ -119,15 +121,15 @@ namespace SceneManager
                 return;
             }
 
-            if (!sceneUtilities.DoesSceneTypeExist(SelectSceneType))
+            if (!SceneUtilities.DoesSceneTypeExist(SelectSceneType))
             {
                 EditorUtility.DisplayDialog("Error", "Scene type does not exist", "OK");
                 return;
             }
             
-            sceneUtilities.DeleteSceneType(SelectSceneType);
-            sceneUtilities.ImportSceneTypes();
-            SelectSceneType = sceneUtilities.GetSceneTypeByIndex(0);
+            SceneUtilities.DeleteSceneType(SelectSceneType);
+            SceneUtilities.ImportSceneTypes();
+            SelectSceneType = SceneUtilities.GetSceneTypeByIndex(0);
             Repaint();
         }
     }

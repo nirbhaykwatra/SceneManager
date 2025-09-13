@@ -1,5 +1,8 @@
 # Changelog
 
+[1.2.1] - 2025-09-12
+- Changed SceneUtilities class and its methods static.
+
 [1.2.0] - 2025-09-11
 - Allow users to rename/move scene assets without losing their metadata.
 

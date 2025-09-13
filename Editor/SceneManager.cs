@@ -18,8 +18,6 @@ namespace SceneManager
     /// </summary>
     public class SceneManagerWindow : OdinMenuEditorWindow
     {
-        // Create a SceneUtilities object to access scene helper methods.
-        private readonly SceneUtilities sceneUtilities = new SceneUtilities();
         
         private static List<string> sceneTypes = SceneUtilities.SceneTypesList;
 
@@ -28,10 +26,10 @@ namespace SceneManager
         public SceneManagerWindow()
         {
             // Clean unused scene metadata
-            sceneUtilities.CleanSceneMetadata();
+            SceneUtilities.CleanSceneMetadata();
             
             // Check if scene types json exists. If not, create it.
-            sceneUtilities.CreateSceneTypesMetadataIfNotExists();
+            SceneUtilities.CreateSceneTypesMetadataIfNotExists();
         }
         
         // Method to open the Scene Manager window. Adds Scene Manager to the File menu.
@@ -66,8 +64,8 @@ namespace SceneManager
             style.stretchWidth = true;
             if (GUI.Button(btnRect1,"Clean Project Metadata", style))
             {
-                sceneUtilities.CleanSceneMetadata();
-                sceneUtilities.ImportSceneTypes();
+                SceneUtilities.CleanSceneMetadata();
+                SceneUtilities.ImportSceneTypes();
                 ForceMenuTreeRebuild();
             }
             
@@ -183,15 +181,15 @@ namespace SceneManager
                 if (sceneAsset == null) continue;
                 
                 // Get scene metadata as a json string.
-                string json = sceneUtilities.GetSceneMetadata(sceneAsset);
+                string json = SceneUtilities.GetSceneMetadata(sceneAsset);
                 
                 // Deserialize json into a SceneMetadata object
                 SceneMetadata sceneMetadata = JsonConvert.DeserializeObject<SceneMetadata>(json);
 
                 if (!sceneTypes.Contains(sceneMetadata.type))
                 {
-                    sceneUtilities.AddSceneType(sceneMetadata.type);
-                    sceneUtilities.ImportSceneTypes();
+                    SceneUtilities.AddSceneType(sceneMetadata.type);
+                    SceneUtilities.ImportSceneTypes();
                     ForceMenuTreeRebuild();
                 }
                 

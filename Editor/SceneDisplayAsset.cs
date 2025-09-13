@@ -8,13 +8,13 @@ using Sirenix.OdinInspector;
 
 namespace SceneManager
 {
+    /// <summary>
+    /// Class containing the inspector information for a scene asset.
+    /// </summary>
     public class SceneAssetDisplay
     {
         public static event Action OnSceneAssetChanged;
         public static event Action OnSceneAssetEdit;
-            
-        // Create sceneUtilities object to access scene helper methods.
-        private SceneUtilities sceneUtilities = new SceneUtilities();
 
         private List<string> sceneTypes = SceneUtilities.SceneTypesList;
         
@@ -32,11 +32,11 @@ namespace SceneManager
         public SceneAssetDisplay(SceneAsset inputSceneAsset)
         {
             // If types.json does not exist, create it with default "Level" value;
-            sceneUtilities.ImportSceneTypes();
+            SceneUtilities.ImportSceneTypes();
             
             // Get scene metadata of the input scene asset.
             sceneAsset = inputSceneAsset;
-            string json = sceneUtilities.GetSceneMetadata(sceneAsset);;
+            string json = SceneUtilities.GetSceneMetadata(sceneAsset);;
             
             // Deserialize scene metadata
             sceneMetadata = JsonConvert.DeserializeObject<SceneMetadata>(json);
@@ -63,7 +63,7 @@ namespace SceneManager
         public void EditSceneMetadata()
         {
             editMode = true;
-            sceneUtilities.ImportSceneTypes();
+            SceneUtilities.ImportSceneTypes();
             OnSceneAssetEdit?.Invoke();
         }
         
